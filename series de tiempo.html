@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Modelos de Series de Tiempo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .code-font { font-family: 'Fira Code', monospace; }
+        .card-hover:hover { transform: translateY(-5px); transition: all 0.3s ease; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-12 animate-fade-in-down">
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900 mb-4">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Series de Tiempo:</span> <br> Conceptos y Código
+            </h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+                Una guía visual que traduce la lógica matemática de los pronósticos a la sintaxis práctica de Python.
+            </p>
+        </header>
+
+        <!-- Timeline / Grid -->
+        <div class="space-y-8">
+
+            <!-- 1. Datos -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover">
+                <div class="bg-blue-600 p-4 flex items-center gap-3 text-white">
+                    <i data-lucide="table-2" class="w-8 h-8"></i>
+                    <h2 class="text-2xl font-bold">1. Preparación de Datos (Pandas)</h2>
+                </div>
+                <div class="p-6 md:flex gap-6">
+                    <div class="md:w-1/2 mb-4 md:mb-0">
+                        <h3 class="text-lg font-bold text-blue-700 flex items-center gap-2 mb-2"><i data-lucide="lightbulb" class="w-5 h-5"></i> El Concepto</h3>
+                        <p class="text-gray-600 mb-4">Una serie de tiempo necesita que la computadora entienda que los datos están atados a una <strong>fecha específica y ordenada</strong>. Dividimos el tiempo en pasado lejano (Entrenamiento), pasado reciente (Validación) y futuro inmediato (Prueba).</p>
+                    </div>
+                    <div class="md:w-1/2 bg-gray-900 rounded-lg p-4 text-sm text-gray-200 code-font overflow-x-auto shadow-inner">
+                        <span class="text-green-400"># 1. Leer archivo saltando fila de error</span><br>
+                        df = pd.read_csv(<span class="text-yellow-300">'datos.csv'</span>, skiprows=<span class="text-orange-400">1</span>)<br><br>
+                        <span class="text-green-400"># 2. Convertir texto a "Objeto Fecha"</span><br>
+                        df[<span class="text-yellow-300">'mes'</span>] = pd.to_datetime(df[<span class="text-yellow-300">'mes'</span>])<br><br>
+                        <span class="text-green-400"># 3. Hacer que la fecha sea la columna vertebral</span><br>
+                        df.set_index(<span class="text-yellow-300">'mes'</span>, inplace=<span class="text-orange-400">True</span>)<br><br>
+                        <span class="text-green-400"># 4. Rebanar (Slicing) para entrenar y validar</span><br>
+                        train = df[:-<span class="text-orange-400">24</span>]<br>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Métrica -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover">
+                <div class="bg-teal-600 p-4 flex items-center gap-3 text-white">
+                    <i data-lucide="ruler" class="w-8 h-8"></i>
+                    <h2 class="text-2xl font-bold">2. Medición del Error (Scikit-Learn)</h2>
+                </div>
+                <div class="p-6 md:flex gap-6">
+                    <div class="md:w-1/2 mb-4 md:mb-0">
+                        <h3 class="text-lg font-bold text-teal-700 flex items-center gap-2 mb-2"><i data-lucide="lightbulb" class="w-5 h-5"></i> El Concepto</h3>
+                        <p class="text-gray-600">Usamos el <strong>MAE (Error Absoluto Medio)</strong>. Simplemente responde a la pregunta: <em>"En promedio, ¿por cuántos puntos se equivocó mi predicción respecto a lo que realmente pasó?"</em>.</p>
+                    </div>
+                    <div class="md:w-1/2 bg-gray-900 rounded-lg p-4 text-sm text-gray-200 code-font overflow-x-auto shadow-inner">
+                        <span class="text-green-400"># Importar la herramienta de la librería estándar</span><br>
+                        <span class="text-pink-400">from</span> sklearn.metrics <span class="text-pink-400">import</span> mean_absolute_error<br><br>
+                        <span class="text-green-400"># Calcular el error matemático</span><br>
+                        error = mean_absolute_error(y_real, y_prediccion)
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Baseline -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover">
+                <div class="bg-emerald-600 p-4 flex items-center gap-3 text-white">
+                    <i data-lucide="leaf" class="w-8 h-8"></i>
+                    <h2 class="text-2xl font-bold">3. Modelo Ingenuo (Baseline)</h2>
+                </div>
+                <div class="p-6 md:flex gap-6">
+                    <div class="md:w-1/2 mb-4 md:mb-0">
+                        <h3 class="text-lg font-bold text-emerald-700 flex items-center gap-2 mb-2"><i data-lucide="lightbulb" class="w-5 h-5"></i> El Concepto</h3>
+                        <p class="text-gray-600">El modelo del "sentido común". Asume que el patrón es un ciclo perfecto. Su lógica: <em>"Las ventas de este diciembre serán exactamente iguales a las ventas del diciembre pasado"</em>.</p>
+                    </div>
+                    <div class="md:w-1/2 bg-gray-900 rounded-lg p-4 text-sm text-gray-200 code-font overflow-x-auto shadow-inner">
+                        <span class="text-green-400"># Extraer los últimos 12 meses de la tabla</span><br>
+                        <span class="text-green-400"># .iloc localiza por índice, .values saca los números</span><br>
+                        prediccion_ingenua = train[<span class="text-yellow-300">'y'</span>].iloc[-<span class="text-orange-400">12</span>:].values
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. ARIMA -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover">
+                <div class="bg-purple-600 p-4 flex items-center gap-3 text-white">
+                    <i data-lucide="trending-up" class="w-8 h-8"></i>
+                    <h2 class="text-2xl font-bold">4. Modelo ARIMA (Statsmodels)</h2>
+                </div>
+                <div class="p-6 md:flex gap-6">
+                    <div class="md:w-1/2 mb-4 md:mb-0">
+                        <h3 class="text-lg font-bold text-purple-700 flex items-center gap-2 mb-2"><i data-lucide="lightbulb" class="w-5 h-5"></i> El Concepto</h3>
+                        <p class="text-gray-600">Estadística pura. Evalúa cómo el pasado afecta al hoy (<strong>A</strong>uto<strong>R</strong>egresivo), estabiliza tendencias sumando/restando (<strong>I</strong>ntegrado) y suaviza el ruido (<strong>M</strong>edia <strong>A</strong>utomática). Con SARIMAX le añadimos ciclos de 12 meses.</p>
+                    </div>
+                    <div class="md:w-1/2 bg-gray-900 rounded-lg p-4 text-sm text-gray-200 code-font overflow-x-auto shadow-inner">
+                        <span class="text-pink-400">from</span> statsmodels.tsa.statespace.sarimax <span class="text-pink-400">import</span> SARIMAX<br><br>
+                        <span class="text-green-400"># Configurar componentes y ciclo de 12 meses</span><br>
+                        modelo = SARIMAX(train, order=(<span class="text-orange-400">0</span>,<span class="text-orange-400">1</span>,<span class="text-orange-400">1</span>), seasonal_order=(<span class="text-orange-400">0</span>,<span class="text-orange-400">1</span>,<span class="text-orange-400">1</span>,<span class="text-orange-400">12</span>))<br><br>
+                        <span class="text-green-400"># .fit() procesa los datos y aprende patrones</span><br>
+                        resultado = modelo.fit(disp=<span class="text-orange-400">False</span>)<br><br>
+                        <span class="text-green-400"># .forecast() predice el futuro</span><br>
+                        prediccion = resultado.forecast(steps=<span class="text-orange-400">12</span>)
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Prophet (Fourier) -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover">
+                <div class="bg-orange-500 p-4 flex items-center gap-3 text-white">
+                    <i data-lucide="activity" class="w-8 h-8"></i>
+                    <h2 class="text-2xl font-bold">5. "Tipo Prophet" (Fourier + Regresión)</h2>
+                </div>
+                <div class="p-6 md:flex gap-6">
+                    <div class="md:w-1/2 mb-4 md:mb-0">
+                        <h3 class="text-lg font-bold text-orange-700 flex items-center gap-2 mb-2"><i data-lucide="lightbulb" class="w-5 h-5"></i> El Concepto</h3>
+                        <p class="text-gray-600">Modelar el tiempo como ondas y curvas, no como secuencias. Creamos ondas matemáticas (senos y cosenos de distintas frecuencias) y usamos una regresión para ver qué combinación de ondas "dibuja" mejor las ventas de chocolate.</p>
+                    </div>
+                    <div class="md:w-1/2 bg-gray-900 rounded-lg p-4 text-sm text-gray-200 code-font overflow-x-auto shadow-inner">
+                        <span class="text-green-400"># Crear curvas usando Numpy</span><br>
+                        onda_seno = np.sin(<span class="text-orange-400">2</span> * np.pi * t / <span class="text-orange-400">12</span>)<br><br>
+                        <span class="text-green-400"># Regresión Lineal Clásica para sumar ondas</span><br>
+                        <span class="text-pink-400">from</span> sklearn.linear_model <span class="text-pink-400">import</span> LinearRegression<br>
+                        modelo_ondas = LinearRegression().fit(X_ondas, y_real)
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. LSTM -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover">
+                <div class="bg-red-600 p-4 flex items-center gap-3 text-white">
+                    <i data-lucide="brain-circuit" class="w-8 h-8"></i>
+                    <h2 class="text-2xl font-bold">6. Modelo LSTM (Deep Learning)</h2>
+                </div>
+                <div class="p-6 md:flex gap-6">
+                    <div class="md:w-1/2 mb-4 md:mb-0">
+                        <h3 class="text-lg font-bold text-red-700 flex items-center gap-2 mb-2"><i data-lucide="lightbulb" class="w-5 h-5"></i> El Concepto</h3>
+                        <p class="text-gray-600 mb-2">Una Red Neuronal con memoria. Recibe un bloque de 6 meses (contexto) para adivinar el 7mo mes. Aprende por ensayo y error (Épocas), ajustando sus neuronas en reversa (Backpropagation) cuando se equivoca.</p>
+                        <p class="text-sm text-red-600 font-semibold bg-red-50 p-2 rounded">Requiere escalar datos a 0-1 (MinMaxScaler) y usar Tensores para GPU.</p>
+                    </div>
+                    <div class="md:w-1/2 bg-gray-900 rounded-lg p-4 text-sm text-gray-200 code-font overflow-x-auto shadow-inner">
+                        <span class="text-green-400"># 1. Crear el "cerebro" con PyTorch</span><br>
+                        <span class="text-pink-400">class</span> LSTM(nn.Module):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;... self.memoria = nn.LSTM(...)<br><br>
+                        <span class="text-green-400"># 2. Ciclo de Aprendizaje (Ejemplo simplificado)</span><br>
+                        <span class="text-pink-400">for</span> epoca <span class="text-pink-400">in</span> <span class="text-blue-400">range</span>(<span class="text-orange-400">100</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;prediccion = cerebro(X_tensor) <span class="text-green-400"># Adivina</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;error = calcular_error(prediccion, real)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;error.backward() <span class="text-green-400"># Descubre el fallo matemáticamente</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;optimizador.step() <span class="text-green-400"># Ajusta las neuronas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conclusion -->
+            <div class="bg-gradient-to-r from-gray-900 to-slate-800 rounded-2xl shadow-xl p-8 text-white text-center">
+                <i data-lucide="trophy" class="w-12 h-12 mx-auto mb-4 text-yellow-400"></i>
+                <h2 class="text-3xl font-extrabold mb-4">La Gran Conclusión</h2>
+                <p class="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+                    A pesar de la popularidad de la Inteligencia Artificial (LSTM), para series de tiempo <strong>mensuales, cortas y con ciclos muy predecibles</strong>, la estadística clásica (<strong>ARIMA</strong>) suele ser más precisa y confiable. ¡Lo complejo no siempre es mejor!
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Inicializar íconos -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
